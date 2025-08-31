@@ -1,8 +1,18 @@
 package hexlet.code;
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+
+
+@Command(
+        name = "gendiff",
+        description = "Compares two configuration files and shows a difference.",
+        mixinStandardHelpOptions = true,
+        version = "gendiff 0.1.0"
+)
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        int exitCode = new CommandLine(new App()).execute(args);
+        System.exit(exitCode);
     }
 }
