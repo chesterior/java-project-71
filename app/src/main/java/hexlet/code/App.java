@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 @Command(
         name = "gendiff",
@@ -19,7 +20,7 @@ import java.util.Map;
         mixinStandardHelpOptions = true,
         version = "gendiff 0.1.0"
 )
-public class App implements Runnable {
+public class App implements Callable<Integer> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -47,43 +48,10 @@ public class App implements Runnable {
     private String format;
 
     @Override
-    public void run() {
-        try {
-            String content1 = readFile(filepath1);
-            String content2 = readFile(filepath2);
-
-            Map<String, Object> data1 = getData(content1);
-            Map<String, Object> data2 = getData(content2);
-
-            System.out.println("file1: " + data1);
-            System.out.println("file2: " + data2);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String readFile(String pathStr) throws Exception {
-        try (InputStream is = App.class.getClassLoader().getResourceAsStream(pathStr)) {
-            if (is != null) {
-                byte[] bytes = is.readAllBytes();
-                return new String(bytes, StandardCharsets.UTF_8);
-            }
-        }
-
-        Path path = Path.of(pathStr).toAbsolutePath().normalize();
-        if (!Files.exists(path)) {
-            throw new Exception("File not found: " + path);
-        }
-        return Files.readString(path);
-    }
-
-    public static Map<String, Object> getData(String content) throws Exception {
-        return parse(content);
-    }
-
-    private static Map<String, Object> parse(String content) throws Exception {
-        return MAPPER.readValue(content, new TypeReference<Map<String, Object>>() {
-        });
+    public Integer call() throws Exception {
+        // формат пока не используем (будет на следующих шагах)
+        String diff = Differ.generate(filepath1, filepath2);
+        System.out.println(diff);
+        return 0;
     }
 }
