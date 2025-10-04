@@ -1,2 +1,11 @@
+.PHONY: build report run-dist
+
+build:
+	./gradlew build
+
+report:
+	./gradlew jacocoTestReport
+
 run-dist:
-	./build/install/app/bin/app -h
+	./gradlew :app:installDist
+	./app/build/install/app/bin/app -h

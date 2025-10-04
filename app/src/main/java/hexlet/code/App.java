@@ -1,17 +1,10 @@
 package hexlet.code;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 @Command(
@@ -21,8 +14,6 @@ import java.util.concurrent.Callable;
         version = "gendiff 0.1.0"
 )
 public class App implements Callable<Integer> {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static void main(String[] args) {
         try {
@@ -49,7 +40,6 @@ public class App implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        // формат пока не используем (будет на следующих шагах)
         String diff = Differ.generate(filepath1, filepath2);
         System.out.println(diff);
         return 0;
