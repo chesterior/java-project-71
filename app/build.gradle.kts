@@ -4,7 +4,6 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
     id("java")
     id("application")
-    id("checkstyle")
     id("jacoco")
     id("org.sonarqube") version "4.4.1.3373"
 }
