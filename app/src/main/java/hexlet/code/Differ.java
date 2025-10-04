@@ -4,73 +4,33 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Differ {
 
-    private Differ() {
-    }
+    private Differ() { }
 
     public static String generate(String filePath1, String filePath2) throws Exception {
         return generate(filePath1, filePath2, "stylish");
     }
 
     public static String generate(String filePath1, String filePath2, String format) throws Exception {
-        String content1 = readFile(filePath1);
-        String content2 = readFile(filePath2);
+        String c1 = readFile(filePath1);
+        String c2 = readFile(filePath2);
 
-        Map<String, Object> left = Parser.parse(content1, filePath1);
-        Map<String, Object> right = Parser.parse(content2, filePath2);
+        Map<String, Object> left  = Parser.parse(c1, filePath1);
+        Map<String, Object> right = Parser.parse(c2, filePath2);
+
+        List<?> diff = DiffBuilder.build(left, right);
 
         switch (format) {
             case "stylish":
-                return buildStylishDiff(left, right);
+                return Stylish.render((List) diff);
             default:
                 throw new IllegalArgumentException("Unknown format: " + format);
         }
     }
 
-    private static String buildStylishDiff(Map<String, Object> left, Map<String, Object> right) {
-        Set<String> keys = new TreeSet<>();
-        keys.addAll(left.keySet());
-        keys.addAll(right.keySet());
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        for (String key : keys) {
-            boolean inLeft = left.containsKey(key);
-            boolean inRight = right.containsKey(key);
-
-            Object lv = left.get(key);
-            Object rv = right.get(key);
-
-            if (inLeft && inRight) {
-                if (Objects.equals(lv, rv)) {
-                    sb.append("    ").append(key).append(": ").append(stringify(lv)).append("\n");
-                } else {
-                    sb.append("  - ").append(key).append(": ").append(stringify(lv)).append("\n");
-                    sb.append("  + ").append(key).append(": ").append(stringify(rv)).append("\n");
-                }
-            } else if (inLeft) {
-                sb.append("  - ").append(key).append(": ").append(stringify(lv)).append("\n");
-            } else {
-                sb.append("  + ").append(key).append(": ").append(stringify(rv)).append("\n");
-            }
-        }
-        sb.append("}");
-        return sb.toString();
-    }
-
-    private static String stringify(Object v) {
-        if (v == null) return "null";
-        // строки в stylish показываем без кавычек — как в примере
-        return String.valueOf(v);
-    }
-
-    // читаем либо из ресурсов, либо с диска
     private static String readFile(String pathStr) throws Exception {
         try (InputStream is = Differ.class.getClassLoader().getResourceAsStream(pathStr)) {
             if (is != null) {
