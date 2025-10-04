@@ -21,14 +21,8 @@ public class Differ {
         Map<String, Object> left  = Parser.parse(c1, filePath1);
         Map<String, Object> right = Parser.parse(c2, filePath2);
 
-        List<?> diff = DiffBuilder.build(left, right);
-
-        switch (format) {
-            case "stylish":
-                return Stylish.render((List) diff);
-            default:
-                throw new IllegalArgumentException("Unknown format: " + format);
-        }
+        List<DiffEntry> diff = DiffBuilder.build(left, right);
+        return Formatter.render(format, diff);
     }
 
     private static String readFile(String pathStr) throws Exception {
