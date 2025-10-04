@@ -1,28 +1,36 @@
 package hexlet.code;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class Differ {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private Differ() {
+    }
 
     public static String generate(String filePath1, String filePath2) throws Exception {
+        return generate(filePath1, filePath2, "stylish");
+    }
+
+    public static String generate(String filePath1, String filePath2, String format) throws Exception {
         String content1 = readFile(filePath1);
         String content2 = readFile(filePath2);
 
-        Map<String, Object> left = parse(content1);
-        Map<String, Object> right = parse(content2);
+        Map<String, Object> left = Parser.parse(content1, filePath1);
+        Map<String, Object> right = Parser.parse(content2, filePath2);
 
-        return buildStylishDiff(left, right);
+        switch (format) {
+            case "stylish":
+                return buildStylishDiff(left, right);
+            default:
+                throw new IllegalArgumentException("Unknown format: " + format);
+        }
     }
 
     private static String buildStylishDiff(Map<String, Object> left, Map<String, Object> right) {
@@ -40,8 +48,8 @@ public class Differ {
             Object rv = right.get(key);
 
             if (inLeft && inRight) {
-                if (equalsByValue(lv, rv)) {
-                    sb.append("  ").append("  ").append(key).append(": ").append(stringify(lv)).append("\n");
+                if (Objects.equals(lv, rv)) {
+                    sb.append("    ").append(key).append(": ").append(stringify(lv)).append("\n");
                 } else {
                     sb.append("  - ").append(key).append(": ").append(stringify(lv)).append("\n");
                     sb.append("  + ").append(key).append(": ").append(stringify(rv)).append("\n");
@@ -56,18 +64,13 @@ public class Differ {
         return sb.toString();
     }
 
-    private static boolean equalsByValue(Object a, Object b) {
-        if (a == null && b == null) return true;
-        if (a == null || b == null) return false;
-        return a.equals(b);
-    }
-
     private static String stringify(Object v) {
         if (v == null) return "null";
-        if (v instanceof String) return (String) v;
+        // строки в stylish показываем без кавычек — как в примере
         return String.valueOf(v);
     }
 
+    // читаем либо из ресурсов, либо с диска
     private static String readFile(String pathStr) throws Exception {
         try (InputStream is = Differ.class.getClassLoader().getResourceAsStream(pathStr)) {
             if (is != null) {
@@ -80,10 +83,5 @@ public class Differ {
             throw new Exception("File not found: " + path);
         }
         return Files.readString(path);
-    }
-
-    private static Map<String, Object> parse(String content) throws Exception {
-        return MAPPER.readValue(content, new TypeReference<Map<String, Object>>() {
-        });
     }
 }
