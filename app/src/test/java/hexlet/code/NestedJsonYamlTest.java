@@ -45,8 +45,8 @@ public class NestedJsonYamlTest {
     @Test
     void yaml_nested_stylish() throws Exception {
         String actual = Differ.generate(
-                "nested/file1.yaml",
-                "nested/file2.yaml",
+                "nested/file1.yml",
+                "nested/file2.yml",
                 "stylish"
         );
         assertThat(actual).isEqualTo(EXPECTED_STYLISH);

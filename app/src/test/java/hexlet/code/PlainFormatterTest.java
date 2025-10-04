@@ -34,8 +34,8 @@ public class PlainFormatterTest {
     @Test
     void yaml_plain() throws Exception {
         String actual = Differ.generate(
-                "nested/file1.yaml",
-                "nested/file2.yaml",
+                "nested/file1.yml",
+                "nested/file2.yml",
                 "plain"
         );
         assertThat(actual).isEqualTo(EXPECTED);

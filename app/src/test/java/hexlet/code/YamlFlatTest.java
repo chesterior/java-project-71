@@ -7,8 +7,8 @@ public class YamlFlatTest {
 
     @Test
     void compareFlatYamlStylish() throws Exception {
-        String path1 = "file1.yaml";
-        String path2 = "file2.yaml";
+        String path1 = "file1.yml";
+        String path2 = "file2.yml";
 
         String expected = "{\n" +
                 "  - follow: false\n" +
