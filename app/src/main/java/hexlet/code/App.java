@@ -13,17 +13,7 @@ import java.util.concurrent.Callable;
         mixinStandardHelpOptions = true,
         version = "gendiff 0.1.0"
 )
-public class App implements Callable<Integer> {
-
-    public static void main(String[] args) {
-        try {
-            int exitCode = new CommandLine(new App()).execute(args);
-            System.exit(exitCode);
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            System.exit(1);
-        }
-    }
+public final class App implements Callable<Integer> {
 
     @Parameters(index = "0", description = "path to first file")
     private String filepath1;
@@ -37,6 +27,16 @@ public class App implements Callable<Integer> {
             defaultValue = "stylish"
     )
     private String format;
+
+    public static void main(String[] args) {
+        try {
+            int exitCode = new CommandLine(new App()).execute(args);
+            System.exit(exitCode);
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            System.exit(1);
+        }
+    }
 
     @Override
     public Integer call() throws Exception {

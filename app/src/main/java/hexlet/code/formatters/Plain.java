@@ -14,29 +14,36 @@ public final class Plain {
     public static String render(List<DiffEntry> diffs) {
         List<String> lines = new ArrayList<>();
         for (DiffEntry d : diffs) {
-            switch (d.type) {
+            switch (d.getType()) {
                 case UNCHANGED:
-                    // пропускаем
                     break;
                 case REMOVED:
-                    lines.add("Property '" + d.key + "' was removed");
+                    lines.add("Property '" + d.getKey() + "' was removed");
                     break;
                 case ADDED:
-                    lines.add("Property '" + d.key + "' was added with value: " + toPlainValue(d.newValue));
+                    lines.add("Property '" + d.getKey() + "' was added with value: " + toPlainValue(d.getNewValue()));
                     break;
                 case UPDATED:
-                    lines.add("Property '" + d.key + "' was updated. From " + toPlainValue(d.oldValue)
-                            + " to " + toPlainValue(d.newValue));
+                    lines.add("Property '" + d.getKey() + "' was updated. From " + toPlainValue(d.getOldValue())
+                            + " to " + toPlainValue(d.getNewValue()));
                     break;
+                default:
+                    throw new IllegalStateException("Unknown diff type: " + d.getType());
             }
         }
         return String.join("\n", lines);
     }
 
     private static String toPlainValue(Object v) {
-        if (v == null) return "null";
-        if (v instanceof String) return "'" + v + "'";
-        if (v instanceof Map || v instanceof Iterable) return "[complex value]";
+        if (v == null) {
+            return "null";
+        }
+        if (v instanceof String) {
+            return "'" + v + "'";
+        }
+        if (v instanceof Map || v instanceof Iterable) {
+            return "[complex value]";
+        }
         return String.valueOf(v);
     }
 }

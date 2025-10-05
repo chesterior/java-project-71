@@ -18,25 +18,27 @@ public final class Json {
         List<Map<String, Object>> out = new ArrayList<>();
         for (DiffEntry d : diffs) {
             Map<String, Object> item = new HashMap<>();
-            item.put("key", d.key);
-            switch (d.type) {
+            item.put("key", d.getKey());
+            switch (d.getType()) {
                 case ADDED:
                     item.put("type", "added");
-                    item.put("value", d.newValue);
+                    item.put("value", d.getNewValue());
                     break;
                 case REMOVED:
                     item.put("type", "removed");
-                    item.put("value", d.oldValue);
+                    item.put("value", d.getOldValue());
                     break;
                 case UNCHANGED:
                     item.put("type", "unchanged");
-                    item.put("value", d.oldValue);
+                    item.put("value", d.getOldValue());
                     break;
                 case UPDATED:
                     item.put("type", "updated");
-                    item.put("oldValue", d.oldValue);
-                    item.put("newValue", d.newValue);
+                    item.put("oldValue", d.getOldValue());
+                    item.put("newValue", d.getNewValue());
                     break;
+                default:
+                    throw new IllegalStateException("Unknown diff type: " + d.getType());
             }
             out.add(item);
         }

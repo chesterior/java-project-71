@@ -6,20 +6,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class YamlFlatTest {
 
     @Test
-    void compareFlatYamlStylish() throws Exception {
-        String path1 = "file1.yml";
-        String path2 = "file2.yml";
+    void yamlFlatStylish() throws Exception {
+        String expected = """
+            {
+              - follow: false
+                host: hexlet.io
+              - proxy: 123.234.53.22
+              - timeout: 50
+              + timeout: 20
+              + verbose: true
+            }""";
 
-        String expected = "{\n" +
-                "  - follow: false\n" +
-                "    host: hexlet.io\n" +
-                "  - proxy: 123.234.53.22\n" +
-                "  - timeout: 50\n" +
-                "  + timeout: 20\n" +
-                "  + verbose: true\n" +
-                "}";
-
-        String actual = Differ.generate(path1, path2, "stylish");
+        String actual = Differ.generate("file1.yml", "file2.yml", "stylish");
         assertThat(actual).isEqualTo(expected);
     }
 }

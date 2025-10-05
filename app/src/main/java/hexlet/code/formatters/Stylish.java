@@ -12,20 +12,22 @@ public final class Stylish {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         for (DiffEntry d : diffs) {
-            switch (d.type) {
+            switch (d.getType()) {
                 case UNCHANGED:
-                    sb.append("    ").append(d.key).append(": ").append(stringify(d.oldValue)).append("\n");
+                    sb.append("    ").append(d.getKey()).append(": ").append(stringify(d.getOldValue())).append("\n");
                     break;
                 case REMOVED:
-                    sb.append("  - ").append(d.key).append(": ").append(stringify(d.oldValue)).append("\n");
+                    sb.append("  - ").append(d.getKey()).append(": ").append(stringify(d.getOldValue())).append("\n");
                     break;
                 case ADDED:
-                    sb.append("  + ").append(d.key).append(": ").append(stringify(d.newValue)).append("\n");
+                    sb.append("  + ").append(d.getKey()).append(": ").append(stringify(d.getNewValue())).append("\n");
                     break;
                 case UPDATED:
-                    sb.append("  - ").append(d.key).append(": ").append(stringify(d.oldValue)).append("\n");
-                    sb.append("  + ").append(d.key).append(": ").append(stringify(d.newValue)).append("\n");
+                    sb.append("  - ").append(d.getKey()).append(": ").append(stringify(d.getOldValue())).append("\n");
+                    sb.append("  + ").append(d.getKey()).append(": ").append(stringify(d.getNewValue())).append("\n");
                     break;
+                default:
+                    throw new IllegalStateException("Unknown diff type: " + d.getType());
             }
         }
         sb.append("}");
@@ -33,7 +35,9 @@ public final class Stylish {
     }
 
     private static String stringify(Object v) {
-        if (v == null) return "null";
+        if (v == null) {
+            return "null";
+        }
         return String.valueOf(v);
     }
 }
